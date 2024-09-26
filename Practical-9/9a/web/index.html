@@ -1,0 +1,1619 @@
+PRACTICAL-2
+A] Using RequestDispatcher Interface create a Servlet which will validate the password entered by the user, if the user has entered
+& quot;Servlet & quot; as password, then he will be forwarded to Welcome Servlet else the user will stay on the index.html page and an error message will be displayed. index.html:
+<html>
+<head>
+<title>LOGIN FROM</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<center><h1>LOGIN FORM</h1></center>
+<form action="login" method="post">
+Enter UserName:<input type="text" name="t1"><br>
+Enter Password:<input type="password" name="t2"><br>
+<center><input type="submit" value="LOGIN" name="b1"></center>
+</form>
+</body>
+</html>
+Login.java:
+import java.io.IOException; import java.io.PrintWriter; import javax.servlet.ServletException; import javax.servlet.annotation.WebServlet; import javax.servlet.http.HttpServlet; import javax.servlet.RequestDispatcher; import javax.servlet.http.HttpServletRequest; import javax.servlet.http.HttpServletResponse;
+@WebServlet(urlPatterns = {"/login"}) public class login extends HttpServlet {
+public void doGet(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException
+{
+processRequest(request,response);
+}
+public void doPost(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException
+{
+processRequest(request,response);
+}
+protected void processRequest(HttpServletRequest request, HttpServletResponse
+response) throws ServletException, IOException { response.setContentType("text/html"); PrintWriter out = response.getWriter(); try {
+String un=request.getParameter("t1"); String ps=request.getParameter("t2"); if(un.equals("Admin") && ps.equals("123"))
+{
+RequestDispatcher rd=request.getRequestDispatcher("Home"); rd.forward(request,response);
+}
+else
+{
+out.println("Invalid Username or Password");
+RequestDispatcher rd=request.getRequestDispatcher("index.html"); rd.include(request,response);
+}
+}catch(Exception e){ out.println(e);
+}
+}
+}
+Home.java:
+import java.io.IOException; import java.io.PrintWriter; import javax.servlet.ServletException; import javax.servlet.annotation.WebServlet; import javax.servlet.http.HttpServlet; import javax.servlet.http.HttpServletRequest; import javax.servlet.RequestDispatcher; import javax.servlet.http.HttpServletResponse;
+@WebServlet(urlPatterns = {"/Home"}) public class Home extends HttpServlet {
+public void doGet(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException
+{
+processRequest(request,response);
+}
+public void doPost(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException
+{
+processRequest(request,response);
+}
+protected void processRequest(HttpServletRequest request, HttpServletResponse
+response) throws ServletException, IOException { response.setContentType("text/html"); PrintWriter out=response.getWriter(); try{
+String s=request.getParameter("t1"); out.println("Welcome"+s); }catch(Exception e){ out.println(e);
+}
+}
+}
+B] Create a servlet that uses Cookies to store the number of times a user has visited servlet.
+Server.java:
+import java.io.IOException; import java.io.PrintWriter; import javax.servlet.ServletException; import javax.servlet.annotation.WebServlet; import javax.servlet.http.Cookie; import javax.servlet.http.HttpServlet; import javax.servlet.http.HttpServletRequest; import javax.servlet.http.HttpServletResponse;
+@WebServlet(urlPatterns = {"/Server"}) public class Server extends HttpServlet {
+protected void processRequest(HttpServletRequest request, HttpServletResponse
+response) throws ServletException, IOException {
+response.setContentType("text/html;charset=UTF-8"); PrintWriter out = response.getWriter(); int count=1; try {
+Cookie[] x=request.getCookies();
+if(x!=null){ count=Integer.parseInt(x[0].getValue()); out.println("Visited "+count+" times");
+}
+else{ out.println("Visited 1 times");
+}
+count++;
+Cookie c=new Cookie("visit",""+count); response.addCookie(c); out.println("<br><br><a href=\"Server\"> Visit Once again</a>");
+}catch(Exception e){ out.println(e);
+}
+}
+@Override
+protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { processRequest(request, response);
+}
+@Override protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { processRequest(request, response);
+}
+@Override public String getServletInfo() { return "Short description";
+}// </editor-fold>
+}
+C]Develop a Simple Servlet Question Answer Application using Database.
+Index.html:
+<html>
+<head>
+<title>Login Form</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<center>
+<h1>LOGIN PAGE</h1>
+<form action="Login" method="post">
+<b>Enter UserName:</b><input type="text" name="t1"><br><br>
+<b>Enter Password:</b><input type="password" name="t2"><br><br>
+<input type="submit" value=" LOGIN " name="b1"> </form>
+</center>
+</body>
+</html>
+Login.java:
+import java.io.IOException; import java.io.PrintWriter; import javax.servlet.ServletException; import javax.servlet.annotation.WebServlet; import javax.servlet.http.HttpServlet; import javax.servlet.http.HttpServletRequest; import javax.servlet.http.HttpServletResponse; import javax.servlet.http.HttpSession;
+@WebServlet(urlPatterns = {"/Login"}) public class Login extends HttpServlet {
+protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+response.setContentType("text/html;charset=UTF-8"); PrintWriter out = response.getWriter(); try {
+String un=request.getParameter("t1");
+String ps=request.getParameter("t2");
+HttpSession s=request.getSession();
+s.setAttribute("username",un);
+if(un.equals("Admin") && ps.equals("369"))
+{
+response.sendRedirect("Home");
+}
+else{ response.sendRedirect("index.html");
+}
+}catch(Exception e){ out.println(e);
+}
+}
+@Override protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+processRequest(request, response);
+}
+@Override protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+processRequest(request, response);
+}
+@Override public String getServletInfo() { return "Short description";
+}// </editor-fold>
+}
+Home.java:
+import java.io.IOException; import java.io.PrintWriter; import javax.servlet.ServletException; import javax.servlet.annotation.WebServlet; import javax.servlet.http.HttpServlet; import javax.servlet.http.HttpServletRequest; import javax.servlet.http.HttpServletResponse; import javax.servlet.http.HttpSession;
+@WebServlet(urlPatterns = {"/Home"}) public class Home extends HttpServlet {
+protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+response.setContentType("text/html;charset=UTF-8"); PrintWriter out = response.getWriter(); try {
+HttpSession s = request.getSession();
+String name = s.getAttribute("username").toString(); Integer count = (Integer) s.getAttribute("visitCount"); if (count == null) {
+count = 1;
+} else {
+count ++;
+}
+s.setAttribute("visitCount", count);
+out.println("<h1>Welcome " + name + "</h1><br><br>"); out.println("<b>User has visited this page " + count + " time</b><br><br>"); out.println("<a href=\"Home\"> Visit Once again</a><br><br>"); out.println("<form action='Home' method='post'>"); out.println("<input type='submit' value='Logout' name='logout'>"); out.println("</form>");
+if (request.getParameter("logout") != null) {
+s.invalidate();
+response.sendRedirect("index.html");
+}
+}catch(Exception e){ out.println(e);
+}
+}
+@Override protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+processRequest(request, response);
+}
+@Override protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+processRequest(request, response);
+}
+@Override public String getServletInfo() { return "Short description";
+}// </editor-fold>
+}
+PRACTICAL-3
+A] Create a registration servlet in Java using JDBC. Accept the details such as Username, Password, Email, and Country from the user using HTML Form and store the registration details in the database. index.html:
+<html>
+<head>
+<title>Register Form</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<center>
+<h1>EMPLOYEE PAGE</h1>
+<form action="Register" method="post">
+<b>Enter UserName:</b><input type="text" name="t1"><br><br>
+<b>Enter Password:</b><input type="password" name="t2"><br><br>
+<b>Enter E-mail:</b><input type="text" name="t3"><br><br>
+<b>Enter Country:</b><input type="text" name="t4"><br><br>
+<input type="submit" value=" Save " name="b1">
+</form>
+</center>
+</body> </html> Register.java:
+import java.io.IOException; import java.io.PrintWriter; import java.sql.Connection; import java.sql.DriverManager; import java.sql.PreparedStatement; import javax.servlet.ServletException; import javax.servlet.annotation.WebServlet; import javax.servlet.http.HttpServlet; import javax.servlet.http.HttpServletRequest; import javax.servlet.http.HttpServletResponse;
+@WebServlet(urlPatterns = {"/Register"}) public class Register extends HttpServlet {
+protected void processRequest(HttpServletRequest request, HttpServletResponse
+response) throws ServletException, IOException {
+response.setContentType("text/html;charset=UTF-8"); PrintWriter out = response.getWriter(); try {
+Class.forName("org.apache.derby.jdbc.ClientDriver");
+Connection c=DriverManager.getConnection("jdbc:derby://localhost:1527/sample","app","app");
+String un=request.getParameter("t1");
+String pass=request.getParameter("t2");
+String em=request.getParameter("t3");
+String country=request.getParameter("t4");
+PreparedStatement ps=c.prepareStatement("insert into Form values(?,?,?,?)"); ps.setString(1,un); ps.setString(2, pass); ps.setString(3,em); ps.setString(4, country); int i=ps.executeUpdate();
+if(i>0){ out.println("Data saved");
+}
+else{ out.println("Data not saved");
+} ps.close(); c.close();
+}catch(Exception e){ out.println(e);
+}
+}
+@Override protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { processRequest(request, response);
+}
+@Override protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { processRequest(request, response);
+}
+@Override public String getServletInfo() { return "Short description";
+}// </editor-fold>
+}
+B] Design a web application to store employee data by using servlet & JDBC.
+Index.html:
+<html>
+<head>
+<title>Employee Form</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<center>
+<h1>EMPLOYEE PAGE</h1>
+<form action="Employee" method="post">
+<b>Enter Employee ID:</b><input type="text" name="t1"><br><br>
+<b>Enter Employee Name:</b><input type="text" name="t2"><br><br>
+<b>Enter Enter Salary:</b><input type="text" name="t3"><br><br>
+<b>Enter Address:</b><input type="text" name="t4"><br><br>
+<b>Enter Department:</b><input type="text" name="t5"><br><br>
+<input type="submit" value=" Save " name="save">&nbsp;
+<input type="submit" value=" Update " name="update">&nbsp;
+<input type="submit" value=" Delete " name="delete">&nbsp; </form>
+</center>
+</body>
+</html>
+Employee.java:
+import java.io.IOException; import java.io.PrintWriter; import java.sql.Connection; import java.sql.DriverManager; import java.sql.PreparedStatement; import javax.servlet.ServletException; import javax.servlet.annotation.WebServlet; import javax.servlet.http.HttpServlet; import javax.servlet.http.HttpServletRequest; import javax.servlet.http.HttpServletResponse;
+@WebServlet(urlPatterns = {"/Employee"}) public class Employee extends HttpServlet {
+protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+response.setContentType("text/html;charset=UTF-8"); PrintWriter out = response.getWriter(); try { int id=Integer.parseInt(request.getParameter("t1"));
+String name=request.getParameter("t2");
+int sal=Integer.parseInt(request.getParameter("t3"));
+String add=request.getParameter("t4");
+String dept=request.getParameter("t5");
+Class.forName("org.apache.derby.jdbc.ClientDriver");
+Connection c=DriverManager.getConnection("jdbc:derby://localhost:1527/sample",
+"app", "app"); if(request.getParameter("save")!=null){
+PreparedStatement ps=c.prepareCall("insert into Employee values(?,?,?,?,?)"); ps.setInt(1,id); ps.setString(2,name); ps.setInt(3,sal); ps.setString(4,add); ps.setString(5,dept); int i=ps.executeUpdate();
+if(i>0){
+out.println("Data Saved Successfully!!");
+}
+else{
+out.println("Data Dosen't Saved");
+} ps.close();
+}
+if(request.getParameter("update")!=null){
+PreparedStatement ps=c.prepareCall("Update Employee set name=?,sal=?,address=?,dept=? where id=?");
+ps.setString(1,name); ps.setInt(2,sal); ps.setString(3,add); ps.setString(4,dept); ps.setInt(5,id); int i=ps.executeUpdate();
+if(i>0){
+out.println("Data Updated Successfully!!");
+}
+else{
+out.println("Data Dosen't Updated");
+} ps.close();
+}
+if(request.getParameter("delete")!=null){
+PreparedStatement ps=c.prepareCall("Delete From Employee Where id=?"); ps.setInt(1,id); int i=ps.executeUpdate();
+if(i>0){
+out.println("Data Deleted Successfully!!");
+}
+else{
+out.println("Data Dosen't Deleted");
+} ps.close();
+}
+c.close();
+}catch(Exception e){ out.println(e);
+}
+}
+@Override protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+processRequest(request, response);
+}
+@Override protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+processRequest(request, response);
+}
+@Override public String getServletInfo() {
+return "Short description";
+}// </editor-fold>
+}
+C]Develop a Simple Servlet Question Answer Application using Database.
+Index.html:
+<html>
+<head>
+<title>WorldCup Quiz</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<center>
+<h1>2024 T20 WroldCup Quiz</h1>
+<form action="QuizServer" method="POST">
+Enter a Question : <input type="text" name="q1"><br>
+Option 1 : <input type="text" name="a1"><br>
+Option 2 : <input type="text" name="a2"><br>
+Option 3 : <input type="text" name="a3"><br>
+Option 4 : <input type="text" name="a4"><br>
+Correct Answer : <input type="Text" name="a5"><br>
+<input type="submit" name="SAVE" value="save">
+</form>
+</center>
+</body>
+</html>
+QuizServer.java:
+import java.io.IOException; import java.io.PrintWriter; import java.sql.Connection; import java.sql.DriverManager; import java.sql.PreparedStatement; import javax.servlet.ServletException; import javax.servlet.annotation.WebServlet; import javax.servlet.http.HttpServlet; import javax.servlet.http.HttpServletRequest; import javax.servlet.http.HttpServletResponse;
+@WebServlet(urlPatterns = {"/QuizServer"}) public class QuizServer extends HttpServlet {
+protected void processRequest(HttpServletRequest request, HttpServletResponse
+response) throws ServletException, IOException {
+response.setContentType("text/html;charset=UTF-8"); PrintWriter out = response.getWriter(); try {
+String q1=request.getParameter("q1");
+String a1=request.getParameter("a1");
+String a2=request.getParameter("a2");
+String a3=request.getParameter("a3");
+String a4=request.getParameter("a4");
+String a5=request.getParameter("a5");
+Class.forName("org.apache.derby.jdbc.ClientDriver");
+Connection c=DriverManager.getConnection("jdbc:derby://localhost:1527/sample","app","app");
+PreparedStatement ps=c.prepareStatement("insert into Quiz values(?,?,?,?,?,?)"); ps.setString(1, q1); ps.setString(2, a1); ps.setString(3, a2); ps.setString(4, a3); ps.setString(5, a4); ps.setString(6, a5);
+int i=ps.executeUpdate();
+if(i>0){ out.println("Data Saved");
+}
+else{
+out.println("Failed");
+} ps.close(); c.close();
+}catch(Exception e){ out.println(e);
+}
+}
+@Override protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { processRequest(request, response);
+}
+@Override protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException { processRequest(request, response);
+}
+@Override public String getServletInfo() { return "Short description";
+}// </editor-fold>
+}
+Viewquestion.java:
+import java.io.IOException; import java.io.PrintWriter; import java.sql.Connection; import java.sql.DriverManager; import java.sql.PreparedStatement; import java.sql.ResultSet; import javax.servlet.ServletException; import javax.servlet.annotation.WebServlet; import javax.servlet.http.HttpServlet; import javax.servlet.http.HttpServletRequest; import javax.servlet.http.HttpServletResponse;
+@WebServlet(urlPatterns = {"/Viewquestion"}) public class Viewquestion extends HttpServlet {
+protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+response.setContentType("text/html;charset=UTF-8"); PrintWriter out = response.getWriter(); try {
+Class.forName("org.apache.derby.jdbc.ClientDriver");
+Connection c=DriverManager.getConnection("jdbc:derby://localhost:1527/sample","app","app"); PreparedStatement ps=c.prepareStatement("select * from Quiz"); ResultSet rs=ps.executeQuery(); out.println("<form action='ResultServer' method='post'>"); out.println("<table border=1><tr><td>2024 T20 WroldCup Quiz</td></tr>"); int i=1; while(rs.next()){ out.println("<tr><td>Question "+i+"]"+rs.getString(1)+"<br>"); out.println("<input type='radio' name='a"+i+"'
+value='"+rs.getString(2)+"'>"+rs.getString(2)); out.println("<input type='radio' name='a"+i+"'
+value='"+rs.getString(3)+"'>"+rs.getString(3)); out.println("<input type='radio' name='a"+i+"'
+value='"+rs.getString(4)+"'>"+rs.getString(4)); out.println("<input type='radio' name='a"+i+"'
+value='"+rs.getString(5)+"'>"+rs.getString(5)); out.println("<input type='hidden' name='b"+i+"' value='"+rs.getString(6)+"'>"); i++;
+}
+out.println("<tr><td><input type='hidden' name='count' value='"+i+"'></tr></td>"); out.println("<tr><td><input type='submit' value='RESULT' name='result'>"); out.println("</table></form>");
+}catch(Exception e){ out.println(e);
+}
+}
+@Override protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+processRequest(request, response);
+}
+@Override protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+processRequest(request, response);
+}
+@Override
+public String getServletInfo() { return "Short description";
+}// </editor-fold>
+}
+ResultServlet.java:
+import java.io.IOException; import java.io.PrintWriter; import javax.servlet.ServletException; import javax.servlet.annotation.WebServlet; import javax.servlet.http.HttpServlet; import javax.servlet.http.HttpServletRequest; import javax.servlet.http.HttpServletResponse;
+@WebServlet(urlPatterns = {"/ResultServer"}) public class ResultServer extends HttpServlet {
+protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+response.setContentType("text/html;charset=UTF-8"); PrintWriter out = response.getWriter(); int marks=0; try {
+int count=Integer.parseInt(request.getParameter("count")); for(int i=1;i<count;i++){
+String x="a"+i;
+String a=request.getParameter(x);
+String y="b"+i;
+String b=request.getParameter(y); if(a.equalsIgnoreCase(b))
+marks++;
+}
+out.println("Marks="+marks+"/"+(count-1));
+}catch(Exception e){ out.println(e);
+}
+}
+@Override protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+processRequest(request, response);
+}
+@Override
+protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+processRequest(request, response);
+}
+@Override public String getServletInfo() {
+return "Short description";
+}// </editor-fold>
+}
+PRACTICAL-4 ❖ Implement the following JSP applications.
+A]Develop a simple JSP application to display values obtained from the use of intrinsic[inbuild] objects of various types.
+Index.html:
+<html>
+<head>
+<title>JSP Implicit Object </title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<form action="newjsp.jsp" method="post">
+<b>Enter Your Name:</b><input type="text" name="t1"><br><br>
+<input type="submit" name="b1">
+</form>
+</body>
+</html>
+Newjsp.jsp:
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<h1>Implicit Object of JSP</h1>
+<b>out object Example:</b><br><br>
+<%
+out.println("Example of out Object Of type JspWriter"); out.println("<br>");
+out.println("<b>Request object Example:</b><br>");
+String s = request.getParameter("t1"); out.println("Entered Name: " + s+"<br><br>");
+out.println("<b>Response object Example:</b>"); out.println("Content Type: " + response.getContentType() + "<br>"); out.println("Character Encoding: " + response.getCharacterEncoding() +
+"<br><br>");
+out.println("<b>application object Example:</b><br><br>"); String contextParam = application.getInitParameter("dname"); out.println("Context Parameter 'dname': " + contextParam + "<br><br>"); application.setAttribute("appName", "Intrinsic Objects Demo"); out.println("<b>Application Name:</b> " + application.getAttribute("appName") +
+"<br><br>");
+out.println("<b>Config object Example:</b><br><br>"); String servletParam =config.getInitParameter("dname"); out.println("Servlet Parameter 'dname': " + servletParam + "<br><br>");
+out.println("<b>Session object Example:</b><br><br>"); out.println("<b>Session ID:</b> " + session.getId() + "<br>"); session.setAttribute("x", 369); out.println("<b>Session Attribute 'x':</b> " + session.getAttribute("x") +
+"<br><br>");
+out.println("<b>page object Example:</b><br><br>");
+out.println("The current JSP page class: " + page.getClass().getName() + "<br>");
+out.println("<b>PageContext object Example:</b><br><br>"); pageContext.setAttribute("y", 123, PageContext.SESSION_SCOPE); out.println("<b>Page Context Attribute 'y':</b> " + pageContext.getAttribute("y",
+PageContext.SESSION_SCOPE) + "<br><br>");
+%>
+web.xml:
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+<context-param>
+<param-name>dname</param-name>
+<param-value>sun.jdbc.odbc.JdbcOdbcDriver</param-value>
+</context-param>
+<servlet>
+<servlet-name>NewServlet</servlet-name>
+<jsp-file>/newjsp.jsp</jsp-file>
+<init-param>
+<param-name>dname</param-name>
+<param-value>sun.jdbc.odbc.JdbcOdbcDriver</param-value>
+</init-param>
+</servlet>
+<servlet-mapping>
+<servlet-name>NewServlet</servlet-name>
+<url-pattern>/newjsp.jsp</url-pattern>
+</servlet-mapping>
+<session-config>
+<session-timeout>30</session-timeout>
+</session-config>
+</web-app>
+B]Develop a simple JSP application to pass values from one page to another with validations. (Name-txt, age-txt, hobbies-checkbox, emailtxt, gender-radio button).
+Index.html:
+<html>
+<head>
+<title>User Information Form</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<h1>User Information form</h1><br>
+<form action="validate.jsp" method="post">
+<b>Enter Name:</b><input type="text" name="t1"><br><br>
+<b>Enter Age:</b><input type="text" name="t2"><br><br>
+<b>Choose Your Hobbies</b>:<br>
+<input type="checkbox" name="hobbies" value="Reading">Reading<br>
+<input type="checkbox" name="hobbies" value="playing">Playing<br>
+<input type="checkbox" name="hobbies" value="Dancing">Dancing<br>
+<input type="checkbox" name="hobbies" value="Traveling"> Traveling<br><br>
+<b>E-mail:</b><input type="email" name="email"><br><br>
+<b>Gender:</b><br>
+<input type="radio" name="gender" value="Male">Male<br>
+<input type="radio" name="gender" value="Female">Female<br>
+<input type="radio" name="gender" value="Others">Others<br><br>
+<input type="submit" name="submit">
+</form>
+</body> </html>
+validate.jsp:
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%
+String name=request.getParameter("t1");
+String age=request.getParameter("t2");
+String[] hobbies = request.getParameterValues("hobbies");
+String email=request.getParameter("email"); String gender=request.getParameter("gender");
+boolean error = false; if (name == null || name.isEmpty()) {
+error = true; out.println("Error: Name is required.<br><br>");
+}
+if (age == null || age.isEmpty()) {
+error = true; out.println("Error: Valid age is required.<br><br>");
+}
+if (hobbies == null && hobbies.length <= 0){
+error = true; out.println("Error: Atleast 1 Selection of Hobbie is required.<br><br>");
+}
+if (email == null || email.isEmpty()) {
+error = true; out.println("Error: Email is required.<br><br>");
+}
+if (gender == null) {
+error = true; out.println("Error: Gender is required.<br><br>");
+}
+if(!error){
+out.println("<h1>User Validate Data</h1><br><br>"); out.println("<b>Name :</b> "+name+"<br><br>"); out.println("<b>Age :</b>"+ age+"<br><br>"); out.println("<b>Hobbies :</b><br>");
+for(String hobby : hobbies) out.println(hobby+"<br>");
+out.println("<b><br>Email :</b>"+email+"<br><br>"); out.println("<b>Gender :</b>"+gender);
+}
+else{ out.println("Please correct the errors and <a href='index.html'>try again</a>.");
+}
+%>
+C]Create a registration and login JSP application to register and authenticate the user based on username and password using JDBC. Index.html:
+<html>
+<head>
+<title>Registration Form</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<center>
+<h1>Registration Form</h1>
+<form action="Register.jsp" method="post">
+<b>Enter Your Name:</b><input type="text" name="t1"><br><br>
+<b>Contact:</b><input type="text" name="t2"><br><br>
+<b>City:</b><input type="text" name="t3"><br><br>
+<b>Password:</b><input type="text" name="t4"><br><br>
+<b>Confirm Password:</b><input type="password" name="t5"><br><br>
+<input type="submit" value="Register" name="save">
+</form>
+</center>
+</body>
+</html>
+Register.jsp:
+<%@page import="java.sql.PreparedStatement"%>
+<%@page import="java.sql.Connection"%>
+<%@page import="java.sql.DriverManager"%>
+<%@page import="javax.servlet.RequestDispatcher"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%
+String name = request.getParameter("t1");
+long no = Long.parseLong(request.getParameter("t2"));
+String city = request.getParameter("t3");
+String pass = request.getParameter("t4"); String cpass = request.getParameter("t5");
+if (!pass.equals(cpass)) {
+RequestDispatcher rd = request.getRequestDispatcher("index.html"); out.println("<h1>Check Password and Confirm Password!!!</h1>"); rd.include(request, response);
+} else {
+Class.forName("org.apache.derby.jdbc.ClientDriver"); Connection c =
+DriverManager.getConnection("jdbc:derby://localhost:1527/sample", "app", "app");
+PreparedStatement ps = c.prepareStatement("insert into userdata values(?,?,?,?,?)"); ps.setString(1, name); ps.setLong(2, no); ps.setString(3, city); ps.setString(4, pass); ps.setString(5, cpass); int i = ps.executeUpdate(); if (i > 0) {
+out.println("<h1>Data Saved Successfully!!!</h1><br><br>");
+out.println("<a href='Authentication.html'>Go to Authentication Page</a>");
+} else { out.println("<h1>Data Doesn't Save!!!</h1>");
+} ps.close(); c.close();
+}
+%>
+Authentication.Html:
+<html>
+<head>
+<title>Authentication</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<form action="Authenticate.jsp" method="post">
+<b>Enter UserName:</b><input type="text" name="t1"><br><br>
+<b>Enter Password:</b><input type="password" name="t2"><br><br>
+<input type="submit" value="Login" name="b1"> </form>
+</body>
+</html>
+Authenticate.jsp:
+<%@page import="java.sql.ResultSet"%>
+<%@page import="java.sql.PreparedStatement"%>
+<%@page import="java.sql.DriverManager"%>
+<%@page import="java.sql.Connection"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%
+String name=request.getParameter("t1");
+String pass=request.getParameter("t2");
+Class.forName("org.apache.derby.jdbc.ClientDriver");
+Connection c=DriverManager.getConnection("jdbc:derby://localhost:1527/sample", "app", "app");
+PreparedStatement ps=c.prepareStatement("Select * from userdata where name=? and Pass=?"); ps.setString(1,name); ps.setString(2,pass);
+ResultSet rs=ps.executeQuery();
+String n="";
+String p="";
+if(rs.next()){ n=rs.getString("name"); p=rs.getString("Pass");
+}
+if(pass.equals(p)){
+out.println("Authenticated User: " + n + "<br>");
+RequestDispatcher rd=request.getRequestDispatcher("Home.html"); rd.include(request,response);
+} else { out.println("Invalid username or password.<br>");
+}
+rs.close(); ps.close(); c.close();
+%>
+Home.jsp:
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<h1>WELCOME </h1><%=request.getParameter("t1")%>
+
+PRACTICAL-5
+❖ Implement the following JSP JSTL and EL Applications.
+A]Create an html page with fields, eno, name, age, desg, salary. Now on submit this data to a JSP page which will update the employee table of database with matching eno.
+Index.html:
+<html>
+<head>
+<title>Employee Registration</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<center><h1>Employee Registration</h1>
+<form action="Employe.jsp" method="post">
+<b>Employee NO:</b><input type="text" name="t1"><br><br>
+<b>Name:</b><input type="text" name="t2"><br><br>
+<b>age:</b><input type="text" name="t3"><br><br>
+<b>Designation (desg):</b><input type="text" name="t4"><br><br>
+<b>Salary:</b><input type="text" name="t5"><br><br>
+<input type="submit" value=”save” name="b1"><br><br> </form>
+</center>
+</body>
+</html>
+Employee.jsp:
+<%@page import="java.sql.ResultSet"%>
+<%@page import="java.sql.Connection"%>
+<%@page import="java.sql.DriverManager"%>
+<%@page import="java.sql.PreparedStatement"%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%
+int eno=Integer.parseInt(request.getParameter("t1")); String name=request.getParameter("t2");
+int age=Integer.parseInt(request.getParameter("t3")); String desg=request.getParameter("t4"); int sal=Integer.parseInt(request.getParameter("t5")); Class.forName("org.apache.derby.jdbc.ClientDriver");
+Connection c=DriverManager.getConnection("jdbc:derby://localhost:1527/sample",
+"app", "app");
+PreparedStatement ps; ps=c.prepareStatement("Select eno from Emp where eno=?"); ps.setInt(1,eno);
+ResultSet rs=ps.executeQuery(); int id=0; while(rs.next()){ if(eno==rs.getInt(1)){
+id=rs.getInt(1);
+}
+} rs.close(); ps.close(); if(id != eno){ ps=c.prepareStatement("insert into Emp values(?,?,?,?,?)"); ps.setInt(1,eno); ps.setString(2,name); ps.setInt(3,age); ps.setString(4,desg); ps.setInt(5,sal); int i=ps.executeUpdate();
+if(i>0)
+out.println("<h1>Data Saved Sucessfully</h1>");
+else out.println("<h1>Data Can't Saved</h1>");
+ps.close();
+}
+else{
+ps = c.prepareStatement("UPDATE Emp SET name = ?, age = ?, desg = ?, salary =
+? WHERE eno = ?");
+ps.setString(1,name); ps.setInt(2,age); ps.setString(3,desg); ps.setInt(4,sal); ps.setInt(5,eno); int i=ps.executeUpdate();
+if(i>0)
+out.println("<h1>Data Updated Sucessfully</h1>");
+else
+out.println("<h1>Data Can't Update</h1>");
+ps.close();
+}
+c.close();
+%>
+B]Create a JSP page to demonstrate the use of Expression language.
+Index.html:
+<html>
+<head>
+<title>Expression Language</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<center><h1>Expression Language (EL)</h1>
+<form action="EL.jsp" method="post">
+<b>Name:</b><input type="text" name="t1"><br><br>
+<b>age:</b><input type="text" name="t2"><br><br>
+<b>Address:</b><input type="text" name="t3"><br><br>
+<input type="submit" name="b1"><br><br>
+</form>
+</center>
+</body>
+</html>
+EL.jsp:
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<h1>Expression Language (EL)</h1>
+<b>PageScope Example</b><br>
+<%
+pageContext.setAttribute("Name", "Ram");
+%>
+<b>Page Attribute Value: </b>${pageScope.Name}<br><br>
+<b>requestScope Example</b><br>
+<%
+request.setAttribute("Address", "Ambivali");
+%>
+<b>Request Attribute Value:</b> ${requestScope.Address}<br><br>
+<b>sessionScope Example</b><br>
+<%
+session.setAttribute("class", "Tyit-A");
+%>
+<b>Session Attribute Value:</b> ${sessionScope.class}<br><br>
+<b>applicationScope Example</b><br>
+<%
+application.setAttribute("gender", "Male");
+%>
+<b>Application Attribute Value:</b> ${applicationScope.gender}<br><br>
+<b>Param Example<br>
+Name:</b>${param.t1}<br>
+<b>Age:</b>:${param.t2}<br><br>
+<b>ParamValues Example<br>
+<b>Request Parameter Values :</b> ${paramValues.t3}<br><br>
+<b>header Example</b><br>
+<b>Header 'User-Agent':</b> ${header["User-Agent"]}<br><br>
+<b>headerVlaues Example</b><br>
+<b>Header 'Accept':</b> ${headerValues["Accept"]}<br><br>
+<b>Cookie Example:</b><br>
+<%
+Cookie c=new Cookie("RollNo","369"); response.addCookie(c);
+%>
+<b>Cookie 'RollNo':</b>${cookie["RollNo"].value}<br><br>
+<b>InitParam Example:</b><br>
+<b>Init Parameter 'configParam':</b> ${initParam["configParam"]}<br><br>
+<b>pageContext Example</b><br>
+<b>Page Context:</b> ${pageContext} Web.xml:
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+<servlet>
+<servlet-name>NewServlet</servlet-name>
+<jsp-file>/EL.jsp</jsp-file>
+<init-param>
+<param-name>configParam</param-name>
+<param-value>Jsp initParameter Object</param-value> </init-param>
+</servlet>
+<servlet-mapping>
+<servlet-name>NewServlet</servlet-name>
+<url-pattern>/EL.jsp</url-pattern>
+</servlet-mapping>
+<session-config>
+<session-timeout> 30
+</session-timeout>
+</session-config>
+</web-app>
+C]Create a JSP application to demonstrate the use of JSTL.
+Index.html:
+<html>
+<head>
+<title>Record</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<center>
+<h1>Registration</h1>
+<form action="Register.jsp" method="post">
+<b>Enter Name:</b><input type="text" name="t1"><br><br>
+<b>Enter id:</b><input type="text" name="t2"><br><br>
+<b>Address:</b><input type="text" name="t3"><br><br>
+<b>E-mail:</b><input type="text" name="t4"><br><br>
+<input type="submit" value="SAVE" name="save">&nbsp;
+<input type="submit" value="Update" name="update">&nbsp;
+<input type="submit" value="Delete" name="delete">&nbsp; </form>
+</center>
+</body>
+</html>
+Register.jsp:
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/core"prefix="c"%>
+<%@taglib uri="http://java.sun.com/jsp/jstl/sql"prefix="sql"%>
+<sql:setDataSource var="c" driver="org.apache.derby.jdbc.ClientDriver" user="app" password="app" url="jdbc:derby://localhost:1527/sample"/>
+<c:set var="name" value="${param.t1}"/>
+<c:set var="id" value="${param.t2}"/>
+<c:set var="add" value="${param.t3}"/>
+<c:set var="email" value="${param.t4}"/>
+<c:if test="${param.save != null}">
+<sql:update dataSource="${c}" var="i"> insert into data values(?,?,?,?) <sql:param value="${id}"/>
+<sql:param value="${name}"/>
+<sql:param value="${add}"/>
+<sql:param value="${email}"/>
+</sql:update>
+<c:if test="${i>0}">
+<c:out value="Data Saved Successfully"/>
+</c:if>
+</c:if>
+<c:if test="${param.update != null}">
+<sql:update dataSource="${c}" var="i">
+Update data set name=? , address=? , email=? Where id=?
+<sql:param value="${name}"/>
+<sql:param value="${add}"/>
+<sql:param value="${email}"/>
+<sql:param value="${id}"/>
+</sql:update>
+<c:if test="${i>0}">
+<c:out value="Data Updated Successfully"/>
+</c:if>
+</c:if>
+<c:if test="${param.delete != null}">
+<sql:update dataSource="${c}" var="i"> Delete from data Where id=?
+<sql:param value="${id}"/>
+</sql:update>
+<c:if test="${i>0}">
+<c:out value="Data Deleted Successfully"/>
+</c:if>
+</c:if>
+
+Practical 8
+a.Develop a simple Inventory Application Using JPA
+index.html:
+<!DOCTYPE html>
+<html>
+<head>
+<title>Inventory Application</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style> body {
+font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; text-align: center; /* Center align heading */
+}
+.container { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); width: 300px; /* Fixed width for the form */
+} input[type="text"], input[type="number"] {
+width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px;
+}
+input[type="submit"] {
+background-color: #4CAF50; color: white;
+padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;
+}
+input[type="submit"]:hover {
+background-color: #45a049;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Inventory Application</h1>
+<form action="Server.jsp" method="POST">
+Enter ID: <input type="number" name="t1"><br>
+Enter Item Name: <input type="text" name="t2"><br>
+Enter Price: <input type="number" name="t3"><br>
+Enter Quantity: <input type="number" name="t4"><br>
+<input type="submit" name="add" value="Add Inventory">
+</form>
+</div>
+</body> </html> Inventory.java:
+package p1;
+import java.io.*; import javax.persistence.*;
+@Entity
+public class Inventory {
+@Id
+private int id; private String name; private int price; private int quantity;
+public int getId() {
+return id;
+}
+public void setId(int id) { this.id = id;
+}
+public String getName() {
+return name;
+}
+public void setName(String name) {
+this.name = name;
+}
+public int getPrice() { return price;
+}
+public void setPrice(int price) { this.price = price;
+}
+public int getQuantity() { return quantity;
+}
+public void setQuantity(int quantity) { this.quantity = quantity;
+}
+}
+persistence.xml:
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+<persistence-unit name="persistence" transaction-type="RESOURCE_LOCAL"> <class>p1.Inventory</class>
+<properties>
+<property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.ClientDriver"/>
+<property name="javax.persistence.jdbc.url" value="jdbc:derby://localhost:1527/inventory"/>
+<property name="javax.persistence.jdbc.user" value="app"/>
+<property name="javax.persistence.jdbc.password" value="app"/>
+<property name="javax.persistence.schema-generation.database.action" value="create"/>
+</properties>
+</persistence-unit>
+</persistence>
+Server.jsp:
+<%--
+	Document	: Server
+Created on : Aug 31, 2024, 8:24:24 AM
+	Author	: Harshith
+--%>
+<%@page contentType="text/html" pageEncoding="UTF-8" import="p1.Inventory , javax.persistence.*"%>
+<%
+int pid=Integer.parseInt(request.getParameter("t1")); String pname=request.getParameter("t2"); int pprice=Integer.parseInt(request.getParameter("t3")); int pquantity=Integer.parseInt(request.getParameter("t4"));
+EntityManagerFactory emf= Persistence.createEntityManagerFactory("persistence"); EntityManager em=emf.createEntityManager(); em.getTransaction().begin(); Inventory i1 = new Inventory();
+i1.setId(pid);
+i1.setName(pname); i1.setPrice(pprice); i1.setQuantity(pquantity); em.persist(i1); em.getTransaction().commit(); em.close(); out.println("Inventory item added successfully!");
+%>
+b)
+index.html:
+<!DOCTYPE html>
+<html>
+<head>
+<title>Inventory Application</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style> body {
+font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; text-align: center; /* Center align heading */
+}
+.container { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); width: 300px; /* Fixed width for the form */
+} input[type="text"], input[type="number"] {
+width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px;
+}
+input[type="submit"] {
+background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer;
+}
+input[type="submit"]:hover {
+background-color: #45a049;
+}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Book Portal</h1>
+<form action="Server.jsp" method="POST">
+Enter ID: <input type="number" name="t1"><br>
+Enter Book Name: <input type="text" name="t2"><br>
+Enter Author Name <input type="text" name="t3"><br>
+<input type="submit" name="add" value="Add Book">
+<input type="submit" name="view" value="Display">
+</form>
+</div>
+</body> </html>
+Inventory.java:
+package p1;
+import java.io.*; import javax.persistence.*;
+@Entity public class Inventory {
+@Id
+private int bid; private String bname; public int getBid() { return bid;
+}
+public void setBid(int bid) { this.bid = bid;
+}
+public String getBname() {
+return bname;
+}
+public void setBname(String bname) {
+this.bname = bname;
+}
+public String getAname() {
+return aname;
+}
+public void setAname(String aname) {
+this.aname = aname;
+}
+private String aname;
+}
+persistence.xml:
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+<persistence-unit name="persistence" transaction-type="RESOURCE_LOCAL"> <class>p1.Inventory</class>
+<properties>
+<property name="javax.persistence.jdbc.driver" value="org.apache.derby.jdbc.ClientDriver"/>
+<property name="javax.persistence.jdbc.url" value="jdbc:derby://localhost:1527/book"/>
+<property name="javax.persistence.jdbc.user" value="app"/>
+<property name="javax.persistence.jdbc.password" value="app"/>
+<property name="javax.persistence.schema-generation.database.action" value="create"/>
+</properties>
+</persistence-unit>
+</persistence>
+Server.jsp:
+<%--
+	Document	: Server
+Created on : Aug 31, 2024, 8:24:24 AM
+	Author	: Harshith
+--%>
+<%@page contentType="text/html" pageEncoding="UTF-8" import="p1.Inventory , javax.persistence.*"%>
+<%
+int bookid=Integer.parseInt(request.getParameter("t1"));
+String bookname=request.getParameter("t2");
+String authorname=request.getParameter("t3");
+EntityManagerFactory emf= Persistence.createEntityManagerFactory("persistence"); EntityManager em=emf.createEntityManager(); em.getTransaction().begin(); if(request.getParameter("add")!=null){ Inventory i1 = new Inventory(); i1.setBid(bookid); i1.setBname(bookname); i1.setAname(authorname); em.persist(i1); em.getTransaction().commit(); em.close(); out.println("Book added successfully!");
+}
+else if(request.getParameter("view")!=null){ Inventory b = em.find(Inventory.class,bookid); out.println("Book Name:"+b.getBname()); out.println("Author Name:"+b.getAname()); em.getTransaction().commit(); em.close();
+}
+%>
+
+Practical 9 a) Html:
+<html>
+<head>
+<title>Feedback Form</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+<form action="save.jsp" method="POST">
+Enter Your ID:<input type="number" name="t1">
+Enter Your Name:<input type="text" name="t2">
+Enter Your Message<input type="text" name="t3"> <input type="submit" value="Save" name="Save">
+</form>
+</body> </html> Pojo:
+package p1;
+public class feedb { public int getFid() { return fid;
+}
+public void setFid(int fid) { this.fid = fid;
+}
+public String getFname() { return fname;
+}
+public void setFname(String fname) { this.fname = fname;
+}
+public String getFmees() { return fmees;
+}
+public void setFmees(String fmees) { this.fmees = fmees;
+}
+private int fid; private String fname; private String fmees;
+}
+Hbm:
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD
+3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<class name="p1.feedb">
+<id name="fid">
+<generator class="assigned"></generator>
+</id>
+<property name="fname"></property>
+<property name="fmees"></property>
+</class>
+</hibernate-mapping>
+Cfg:
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration
+DTD
+3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+<session-factory>
+<property name="hibernate.hbm2ddl.auto">update</property>
+<property name="hibernate.dialect">org.hibernate.dialect.DerbyDialect</property>
+<property name="hibernate.connection.driver_class">org.apache.derby.jdbc.ClientDriver</propert y>
+<property name="hibernate.connection.url">jdbc:derby://localhost:1527/compony</property> <property name="hibernate.connection.username">app</property>
+<property name="hibernate.connection.password">app</property>
+<mapping resource="hibernate.hbm.xml"/>
+</session-factory> </hibernate-configuration> JSP:
+<%@page import="p1.feedb" %>
+<%@page contentType="text/html" pageEncoding="UTF-8" import="org.hibernate.*,org.hibernate.cfg.*"%>
+<%
+int ie=Integer.parseInt(request.getParameter("t1"));
+String en=request.getParameter("t2");
+String ms=request.getParameter("t3");
+SessionFactory sf=new Configuration().configure().buildSessionFactory();
+Session s=sf.openSession(); Transaction t=s.beginTransaction(); feedb fb=new feedb();
+fb.setFid(ie); fb.setFname(en); fb.setFmees(ms); s.persist(fb);
+t.commit(); out.println("Thank you for giving feedback"); s.close(); sf.close();
+%>
+b)
+Index.html:
+<!DOCTYPE html>
+<html>
+<head>
+<title>Employee Management</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style> body {
+font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; color: #333;
+}
+form {
+background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); width: 300px; box-sizing: border-box;
+}
+h1 {
+text-align: center; color: #333; margin-bottom: 20px;
+}
+label {
+display: block; margin-bottom: 5px; font-weight: bold;
+}
+input[type="number"], input[type="text"] {
+width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;
+}
+input[type="submit"] { width: 48%; padding: 10px; margin: 10px 1%; border: none; border-radius: 4px; background-color: #28a745; color: white; cursor: pointer; font-size: 16px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); transition: background-color 0.3s ease;
+}
+input[type="submit"]:hover {
+background-color: #218838;
+}
+.submit-container { display: flex;
+justify-content: space-between;
+}
+.error { color: red; margin-top: 10px; font-size: 14px;
+}
+</style>
+</head>
+<body>
+<form action="Server.jsp" method="POST">
+<h1>Employee Form</h1>
+<label for="t1">Enter ID:</label>
+<input type="number" id="t1" name="t1" required>
+<label for="t2">Enter Name:</label>
+<input type="text" id="t2" name="t2">
+<label for="t3">Enter Salary:</label>
+<input type="number" id="t3" name="t3">
+<div class="submit-container">
+<input type="submit" name="save" value="Save">
+<input type="submit" name="view" value="View">
+</div>
+<div class="error">
+<!-- Error messages will be displayed here if needed --> </div>
+</form>
+</body>
+</html>
+Employee.java:
+/*
+* To change this license header, choose License Headers in Project Properties. * To change this template file, choose Tools | Templates * and open the template in the editor.
+*/
+package p1;
+import javax.persistence.*;
+@Entity
+public class Employee {
+@Id
+private int empid;
+@Column
+private String ename; private int empsal;
+public int getEmpid() {
+return empid;
+}
+public void setEmpid(int empid) {
+this.empid = empid;
+}
+public String getEname() {
+return ename;
+}
+public void setEname(String ename) {
+this.ename = ename;
+}
+public int getEmpsal() {
+return empsal;
+}
+public void setEmpsal(int empsal) {
+this.empsal = empsal;
+}
+}
+Hibernate.cfg.xml:
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration
+DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+<session-factory>
+<property name="hibernate.hbm2ddl.auto">update</property>
+<property name="hibernate.dialect">org.hibernate.dialect.DerbyDialect</property>
+<property name="hibernate.connection.driver_class">org.apache.derby.jdbc.ClientDriver</propert y>
+<property name="hibernate.connection.url">jdbc:derby://localhost:1527/college</property>
+<property name="hibernate.connection.username">harshith</property>
+<property name="hibernate.connection.password">harshith2004</property>
+<mapping class="p1.Employee"></mapping>
+</session-factory> </hibernate-configuration>
+Server.jsp:
+<%--
+	Document	: Server
+Created on : Aug 27, 2024, 6:59:54 AM
+	Author	: Harshith
+--%>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="p1.Employee"%>
+<%@ page
+import="org.hibernate.*,org.hibernate.cfg.*,org.hibernate.Session,org.hibernate.Session Factory"%>
+<%
+int en=Integer.parseInt(request.getParameter("t1")); String ename=request.getParameter("t2"); int esal=Integer.parseInt(request.getParameter("t3"));
+SessionFactory sf=new Configuration().configure().buildSessionFactory();
+Session s=sf.openSession(); Transaction t=s.beginTransaction(); out.println("en");
+if(request.getParameter("save")!=null){ Employee e=new Employee(); e.setEmpid(en);
+e.setEname(ename);
+e.setEmpsal(esal);
+s.persist(e);
+t.commit(); out.println("Data Saved");
+}
+else if(request.getParameter("view")!=null) { Employee e=(Employee) s.get(Employee.class,en); out.println("Employee Name: " + e.getEname() + "<br>"); out.println("Employee Salary: " + e.getEmpsal() + "<br>"); t.commit();
+}
+%>
+Practical 10: index.html:
+<!DOCTYPE html>
+<html>
+<head>
+<title>Form Example</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style> body {
+font-family: Arial, sans-serif; background-color: #f4f4f4; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;
+}
+form { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); width: 300px;
+}
+input[type="number"], input[type="text"] { width: calc(100% - 22px); padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box;
+}
+input[type="submit"] { background-color: #4CAF50; color: white; border: none; padding: 15px 20px; text-align: center; text-decoration: none; display: inline-block; font-size: 16px; margin: 10px 0; border-radius: 4px; cursor: pointer; width: calc(100% - 22px); box-sizing: border-box;
+}
+input[type="submit"]:hover { background-color: #45a049;
+}
+</style>
+</head> <body>
+<form action="Server.jsp" method="POST">
+Enter ID:<input type="number" name="t1"><br>
+Enter Name:<input type="text" name="t2"><br>
+Enter Address:<input type="text" name="t3"><br>
+<input type="submit" name="save" value="Save">
+<input type="submit" name="update" value="Update">
+<input type="submit" name="delete" value="Delete">
+<input type="submit" name="view" value="View">
+</form>
+</body>
+</html>
+Employee.java:
+package p1;
+import javax.persistence.*;
+@Entity public class Employee {
+@Id
+private int eid;
+@Column
+private String ename;
+private String eadd;
+public int getEid() { return eid;
+}
+public void setEid(int eid) { this.eid = eid;
+}
+public String getEname() { return ename;
+}
+public void setEname(String ename) { this.ename = ename;
+}
+public String getEadd() { return eadd;
+}
+public void setEadd(String eadd) { this.eadd = eadd;
+}
+}
+hibernate.cfg.xml:
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration> <session-factory>
+<property name="hbm2dd1.auto">update</property>
+<property name="hibernate.dialect">org.hibernate.dialect.DerbyDialect</property> <property name="hibernate.connection.driver_class">org.apache.derby.jdbc.ClientDriver</propert y>
+<property name="hibernate.connection.url">jdbc:derby://localhost:1527/inventory</property>
+<property name="hibernate.connection.username">app</property>
+<property name="hibernate.connection.password">app</property>
+<mapping class="p1.Employee"></mapping>
+</session-factory> </hibernate-configuration>
+Server.jsp:
+<%@page contentType="text/html" pageEncoding="UTF-8"
+import="p1.Employee,org.hibernate.*,org.hibernate.cfg.*,java.util.*"%>
+<%
+SessionFactory sf=new Configuration().configure().buildSessionFactory();
+Session s=sf.openSession(); Transaction t=s.beginTransaction(); if(request.getParameter("save")!=null){
+int id=Integer.parseInt(request.getParameter("t1"));
+String name=request.getParameter("t2");
+String add=request.getParameter("t3"); Employee e=new Employee();
+e.setEid(id);
+e.setEname(name);
+e.setEadd(add);
+s.persist(e);
+t.commit(); out.println("Saved"); s.close(); sf.close();
+}
+if(request.getParameter("update")!=null){ int id=Integer.parseInt(request.getParameter("t1"));
+String name=request.getParameter("t2");
+String add=request.getParameter("t3");
+Query q=s.createQuery("update Employee set eadd=:a where ename=:n"); q.setParameter("a",add);
+q.setParameter("n",name); int x=q.executeUpdate(); if(x>0){ out.println("Updated");
+}
+else {
+out.println("Not");
+}
+t.commit();
+s.close(); sf.close();
+}
+if(request.getParameter("delete")!=null){
+int id=Integer.parseInt(request.getParameter("t1"));
+Query q=s.createQuery("delete from Employee where eid=:i"); q.setParameter("i",id); int x=q.executeUpdate(); if(x>0){ out.println("Deleted");
+}
+else {
+out.println("Not");
+}
+t.commit();
+s.close(); sf.close();
+}
+if(request.getParameter("view")!=null){
+Query q=s.createQuery("From Employee");
+List l=q.list();
+Iterator itr=l.iterator(); out.println("<table
+border='1'><tr><th>ID</th><th>Name</th><th>Address</th></tr>"); while(itr.hasNext()){
+Employee e=(Employee) itr.next(); out.println("<tr>");
+out.println("<td>"+e.getEid()+"</td><td>"+e.getEname()+"</td><td>"+e.getEadd()+"</td
+>"); out.println("</tr>");
+} out.println("</table>"); }
+%>
+
+Practical 6
+a)
+File1.java
+/*
+*To change this license header, choose License Headers in
+Project Properties. * To change this template file, choose Tools |
+Templates
+*and open the template in the editor.
+*/
+package p1;
+import javax.ejb.Stateless;
+/**
+*
+*@author Sarvan
+*/
+@Stateless public class cunverter implements cunverterRemote {
+public float usd_to_inr(float c) {
+return c*83.5F;
+}
+// Add business logic below. (Right-click in editor and choose // "Insert Code > Add Business Method")
+public float inr_to_usd(float c) {
+return c/83.5F;
+}
+}
+file2.java
+/*
+*To change this license header, choose License Headers in
+Project Properties. * To change this template file, choose Tools |
+Templates
+*and open the template in the editor.
+*/
+package p1; import javax.ejb.Remote;
+/**
+*
+*@author Sarvan
+*/
+@Remote
+public interface cunverterRemote { float usd_to_inr(float c); float inr_to_usd(float c);
+}
+Main.java
+/*
+*To change this license header, choose License Headers in
+Project Properties. * To change this template file, choose Tools |
+Templates
+*and open the template in the editor.
+*/
+package convert;
+import java.util.Scanner; import javax.ejb.EJB; import p1.cunverterRemote;
+/**
+*
+*@author Sarvan
+*/
+public class Main {
+@EJB
+private static cunverterRemote cunverter;
+/**
+*@param args the command line arguments
+*/
+public static void main(String[] args) {
+// TODO code application logic here
+Scanner sc=new Scanner(System.in);
+System.out.println("Enter ind amount to usd:"); float c=sc.nextFloat();
+System.out.println("Enter Usd amount to inr:"); float j=sc.nextFloat();
+float inr=cunverter.inr_to_usd(c);
+System.out.println("Indian Ruppes to usd:"+inr);
+float usd=cunverter.usd_to_inr(j);
+System.out.println("USD ruppoed to ind:"+usd);
+}
+}
+b. Develop a simple EJB calculator application by using Stateless session bean.
+[use Web client]
+Application Client static main.java
+/*
+*To change this license header, choose License Headers in Project Properties. * To change this template file, choose Tools | Templates * and open the template in the editor.
+*/
+package calculs; import java.util.Scanner; import javax.ejb.EJB; import p1.calRemote;
+/**
+*
+*@author Sarvan
+*/
+public class Main {
+@EJB
+private static calRemote cal;
+/**
+*@param args the command line arguments
+*/
+public static void main(String[] args) { // TODO code application logic here
+Scanner sc=new Scanner(System.in);
+System.out.println("Enter the 1st number:"); int i=sc.nextInt();
+System.out.println("Enter the 2st number:"); int j=sc.nextInt(); int add=cal.add(i, j);
+System.out.println("Addition:"+add); int mult=cal.mult(i, j);
+System.out.println("Multiplaction:"+mult); int div=cal.div(i, j);
+System.out.println("Division:"+div); int sub=cal.sub(i, j);
+System.out.println("Subtraction:"+sub);
+}
+}
+calremote.java
+/*
+*To change this license header, choose License Headers in Project Properties. * To change this template file, choose Tools | Templates * and open the template in the editor.
+*/
+package p1;
+import javax.ejb.Remote;
+/**
+*
+*@author Sarvan
+*/
+@Remote
+public interface calRemote { int add(int i, int j); int mult(int i, int j); int sub(int i, int j); int div(int i, int j);
+}
+calculator.java
+/*
+*To change this license header, choose License Headers in Project Properties. * To change this template file, choose Tools | Templates * and open the template in the editor.
+*/
+package p1;
+import javax.ejb.Stateless;
+/**
+*
+*@author Sarvan
+*/
+@Stateless public class cal implements calRemote { public int add(int i, int j) { return i+j;
+}
+// Add business logic below. (Right-click in editor and choose
+// "Insert Code > Add Business Method") public int mult(int i, int j) { return i*j;
+}
+public int sub(int i, int j) { return i-j;
+}
+public int div(int i, int j) { return i/j;
+}
+}
+Practical 7:
+7A:
+/*
+*To change this license header, choose License Headers in
+Project Properties. * To change this template file, choose Tools |
+Templates
+*and open the template in the editor.
+*/
+import java.io.IOException; import java.io.PrintWriter; import javax.ejb.EJB;
+import javax.servlet.ServletException; import javax.servlet.annotation.WebServlet; import javax.servlet.http.HttpServlet; import javax.servlet.http.HttpServletRequest; import javax.servlet.http.HttpServletResponse; import p1.FactoralsRemote;
+@WebServlet(urlPatterns = {"/Server1"}) public class Server1 extends HttpServlet {
+@EJB
+private FactoralsRemote factorals;
+protected void processRequest(HttpServletRequest request,
+HttpServletResponse response) throws ServletException, IOException { response.setContentType("text/html;charset=UTF-8");
+try (PrintWriter out = response.getWriter()) {
+int number = Integer.parseInt(request.getParameter("t1")); int Fact=factorals.factorial(number);
+out.println("Factorial number:"+Fact);
+}
+}
+// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+/**
+*Handles the HTTP <code>GET</code> method.
+*
+*@param request servlet request
+*@param response servlet response
+*@throws ServletException if a servlet-specific error occurs
+*@throws IOException if an I/O error occurs
+*/
+@Override
+protected void doGet(HttpServletRequest request,
+HttpServletResponse response) throws ServletException,
+IOException { processRequest(request, response);
+}
+/**
+*Handles the HTTP <code>POST</code> method.
+*
+*@param request servlet request
+*@param response servlet response
+*@throws ServletException if a servlet-specific error occurs
+*@throws IOException if an I/O error occurs
+*/
+@Override
+protected void doPost(HttpServletRequest request,
+HttpServletResponse response) throws ServletException,
+IOException { processRequest(request, response);
+}
+/**
+*Returns a short description of the servlet.
+*
+*@return a String containing servlet description
+*/
+@Override public String getServletInfo() {
+return "Short description";
+}// </editor-fold>
+}
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in
+Project Properties. To change this template file, choose Tools |
+Templates
+and open the template in the editor.
+-->
+<html>
+<head>
+<title>TODO supply a title</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> </head>
+<body>
+<form action="Server1" method="post">
+<input type="text" name="t1" placeholder="Enter a number" />
+<button type="submit">Submit</button>
+</form>
+</body>
+</html>
+/*
+*To change this license header, choose License Headers in
+Project Properties. * To change this template file, choose Tools |
+Templates
+*and open the template in the editor.
+*/
+package p1; import javax.ejb.Remote;
+/**
+*
+*@author Sarvan
+*/
+@Remote
+public interface FactoralsRemote { int factorial(int n);
+}
+/*
+*To change this license header, choose License Headers in
+Project Properties. * To change this template file, choose Tools |
+Templates
+*and open the template in the editor.
+*/
+package p1;
+import javax.ejb.Stateless;
+/**
+*
+*@author Sarvan
+*/
+@Stateless public class Factorals implements FactoralsRemote {
+// Add business logic below. (Right-click in editor and choose // "Insert Code > Add
+Business Method") @Override
+public int factorial(int n) { int result = 1; for (int i = 1; i <= n; i++) {
+result *= i;
+}
+return result;
+}
+}
+
+7B
+/*
+*To change this license header, choose License Headers in
+Project Properties. * To change this template file, choose Tools |
+Templates
+*and open the template in the editor.
+*/
+import java.io.IOException; import java.io.PrintWriter; import javax.ejb.EJB; import javax.servlet.ServletException; import javax.servlet.annotation.WebServlet; import javax.servlet.http.HttpServlet; import javax.servlet.http.HttpServletRequest; import javax.servlet.http.HttpServletResponse; import p1.PrimeorRemote;
+/**
+*
+* @author Sarvan
+*/
+@WebServlet(urlPatterns = {"/fact"}) public class fact extends HttpServlet {
+@EJB
+private PrimeorRemote primeor;
+protected void processRequest(HttpServletRequest request,
+HttpServletResponse response) throws ServletException, IOException { response.setContentType("text/html;charset=UTF-8");
+try (PrintWriter out = response.getWriter()) {
+int Numbers=Integer.parseInt(request.getParameter("t1")); boolean PrimeOrNot=primeor.isPrime(Numbers);
+out.println("<h1>Prime Or Not<h1>: "+PrimeOrNot);
+}
+}
+// <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+/**
+*Handles the HTTP <code>GET</code> method.
+*
+*@param request servlet request
+*@param response servlet response
+*@throws ServletException if a servlet-specific error occurs
+*@throws IOException if an I/O error occurs
+*/
+@Override
+protected void doGet(HttpServletRequest request,
+HttpServletResponse response) throws ServletException,
+IOException { processRequest(request, response);
+}
+/**
+*Handles the HTTP <code>POST</code> method.
+*
+*@param request servlet request
+*@param response servlet response
+*@throws ServletException if a servlet-specific error occurs
+*@throws IOException if an I/O error occurs
+*/
+@Override
+protected void doPost(HttpServletRequest request,
+HttpServletResponse response) throws ServletException,
+IOException { processRequest(request, response);
+}
+/**
+*Returns a short description of the servlet.
+*
+*@return a String containing servlet description
+*/
+@Override public String getServletInfo() {
+return "Short description";
+}// </editor-fold>
+}
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in
+Project Properties. To change this template file, choose Tools | Templates and open the template in the editor.
+-->
+<html>
+<head>
+<title>TODO supply a title</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> </head>
+<body>
+<form action="fact" method="POST">
+Enter Number: <input type="text" name="t1">
+<input type="submit" value="PrimeOrNot" name="PrimeOrNot">
+</form>
+</body>
+</html>
+/*
+*To change this license header, choose License Headers in
+Project Properties. * To change this template file, choose Tools |
+Templates
+*and open the template in the editor.
+*/
+package p1; import javax.ejb.Remote;
+/**
+*
+*@author Sarvan
+*/
+@Remote
+public interface PrimeorRemote {
+boolean isPrime(int number);
+}
+/*
+*To change this license header, choose License Headers in
+Project Properties. * To change this template file, choose Tools |
+Templates
+*and open the template in the editor.
+*/
+package p1;
+import javax.ejb.Stateless;
+/**
+*
+*@author Sarvan
+*/
+@Stateless public class Primeor implements PrimeorRemote {
+// Add business logic below. (Right-click in editor and choose // "Insert Code > Add
+Business Method") @Override public boolean isPrime(int number){
+if(number>2){
+return false;
+}
+for(int i=2;i<=Math.sqrt(number);i++){
+if(number % 2==0){ return false;
+}
+}
+return true;
+}
+}
